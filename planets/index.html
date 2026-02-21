@@ -1,143 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planets</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planets — A Tour of the Solar System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
-    .slide {
-      position: absolute;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06060a;
+      --surface: #0e0e14;
+      --accent: #f0a020;
+      --accent-soft: rgba(240, 160, 32, 0.15);
+      --text: #f0f0f2;
+      --muted: #7a7a8c;
+      --font-display: 'Exo 2', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
       inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 100% 80% at 50% 0%, rgba(240, 160, 32, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 80% 60% at 20% 80%, rgba(200, 120, 40, 0.05) 0%, transparent 45%),
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(180, 100, 60, 0.04) 0%, transparent 40%),
+        var(--bg);
+      animation: gradientShift 12s ease-in-out infinite;
+      background-size: 200% 200%;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .back {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 100;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .back:hover { color: var(--accent); }
+
+    .slide {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 2rem;
-      background: #0a0a12;
-      color: #e8e8e8;
+      justify-content: center;
+      padding: 4rem;
       opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
+      pointer-events: none;
+      transform: scale(0.96) translateY(20px);
+      transition: none;
     }
-    .slide.active { opacity: 1; visibility: visible; }
-    .slide h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #fff; }
-    .slide h2 { font-size: 1.5rem; margin-bottom: 0.75rem; color: #b8d4ff; }
-    .slide p { max-width: 42rem; text-align: center; line-height: 1.6; }
-    .slide ul { text-align: left; max-width: 32rem; margin-top: 0.5rem; }
-    .slide li { margin: 0.25rem 0; }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      animation: slideEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .slide.leaving {
+      animation: slideLeave 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    }
+
+    [data-dir="prev"] .slide.active {
+      animation: slideEnterReverse 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    [data-dir="prev"] .slide.leaving {
+      animation: slideLeaveReverse 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    }
+
+    @keyframes slideEnter {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes slideLeave {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(1.05) translateY(-20px); }
+    }
+    @keyframes slideEnterReverse {
+      from { opacity: 0; transform: scale(1.05) translateY(-20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes slideLeaveReverse {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.92) translateY(20px); }
+    }
+
+    .slide.active h1 { animation: contentIn 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active h2 { animation: contentIn 0.6s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active .subtitle { animation: contentIn 0.6s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active p { animation: contentIn 0.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active .card { animation: contentIn 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active ul { animation: contentIn 0.6s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .slide.active li:nth-child(1) { animation: contentIn 0.5s 0.45s both; }
+    .slide.active li:nth-child(2) { animation: contentIn 0.5s 0.55s both; }
+    .slide.active li:nth-child(3) { animation: contentIn 0.5s 0.65s both; }
+    .slide.active li:nth-child(4) { animation: contentIn 0.5s 0.75s both; }
+
+    @keyframes contentIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-number {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 18vw, 14rem);
+      font-weight: 800;
+      line-height: 0.85;
+      opacity: 0.06;
+      position: absolute;
+      top: -0.5rem;
+      right: 1rem;
+      user-select: none;
+    }
+
+    .slide h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 8vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .slide .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .slide h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .slide h2::before {
+      content: '';
+      width: 3px;
+      align-self: stretch;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-right: 0.5rem;
+    }
+    .slide h2 .icon {
+      color: var(--accent);
+      font-size: 0.85em;
+    }
+
+    .slide p {
+      max-width: 36rem;
+      text-align: center;
+      line-height: 1.7;
+      font-weight: 400;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.75rem 2rem;
+      max-width: 28rem;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .slide ul {
+      list-style: none;
+      text-align: left;
+      max-width: 28rem;
+    }
+    .slide ul li {
+      padding: 0.4rem 0 0.4rem 2rem;
+      position: relative;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .slide ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.75em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .slide ul li i {
+      margin-right: 0.5rem;
+      color: var(--accent);
+      opacity: 0.9;
+      width: 1em;
+    }
+
+    .pill {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.3em 1em;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero .slide h1 {
+      font-size: clamp(3.5rem, 12vw, 7rem);
+      line-height: 1;
+    }
+
+    .closing .slide h1 {
+      color: var(--accent);
+    }
+    .slide a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s, opacity 0.2s;
+    }
+    .slide a:hover { color: var(--text); }
+
     .nav {
       position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 100;
       display: flex;
-      gap: 1rem;
-      z-index: 10;
+      gap: 0.75rem;
     }
+
     .nav button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+      font-weight: 600;
       cursor: pointer;
-      background: #2a2a3a;
-      color: #fff;
-      border: 1px solid #444;
-      border-radius: 6px;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, color 0.2s;
     }
-    .nav button:hover { background: #3a3a4a; }
-    .back { position: fixed; top: 1rem; left: 1rem; z-index: 10; }
-    .back a { color: #888; text-decoration: none; font-size: 0.9rem; }
-    .back a:hover { color: #fff; }
+    .nav button:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .slide-bullets {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 100;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .slide-bullets span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: background 0.25s ease, transform 0.25s ease;
+      cursor: pointer;
+    }
+    .slide-bullets span:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .slide-bullets span.active {
+      background: var(--accent);
+      transform: scale(1.25);
+    }
   </style>
 </head>
 <body>
-  <a class="back" href="../">← Back to presentations</a>
+  <a class="back" href="../">← Back</a>
+
   <section class="slide active" data-slide="0">
+    <span class="pill">The Solar System</span>
     <h1>Planets</h1>
-    <p>A quick tour of our solar system</p>
+    <p class="subtitle">A tour from the Sun outward</p>
   </section>
+
   <section class="slide" data-slide="1">
-    <h2>Mercury</h2>
+    <span class="slide-number">1</span>
+    <h2><span class="icon"><i class="fa-solid fa-circle-dot"></i></span> Mercury</h2>
     <p>Closest to the Sun; small, rocky, and heavily cratered.</p>
     <ul>
-      <li>Orbital period: ~88 Earth days</li>
-      <li>No atmosphere to speak of</li>
+      <li><i class="fa-solid fa-clock"></i> Orbital period: ~88 Earth days</li>
+      <li><i class="fa-solid fa-wind"></i> No atmosphere to speak of</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="2">
-    <h2>Venus</h2>
+    <span class="slide-number">2</span>
+    <h2><span class="icon"><i class="fa-solid fa-sun"></i></span> Venus</h2>
     <p>Similar in size to Earth; thick CO₂ atmosphere, runaway greenhouse.</p>
     <ul>
-      <li>Extremely hot surface</li>
-      <li>Rotates slowly in the opposite direction</li>
+      <li><i class="fa-solid fa-temperature-high"></i> Extremely hot surface</li>
+      <li><i class="fa-solid fa-rotate"></i> Rotates slowly in the opposite direction</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="3">
-    <h2>Earth</h2>
+    <span class="slide-number">3</span>
+    <h2><span class="icon"><i class="fa-solid fa-earth-americas"></i></span> Earth</h2>
     <p>Our home: liquid water, life, and a protective atmosphere.</p>
     <ul>
-      <li>One natural satellite: the Moon</li>
-      <li>Orbital period: ~365 days</li>
+      <li><i class="fa-solid fa-moon"></i> One natural satellite: the Moon</li>
+      <li><i class="fa-solid fa-calendar-days"></i> Orbital period: ~365 days</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="4">
-    <h2>Mars</h2>
+    <span class="slide-number">4</span>
+    <h2><span class="icon"><i class="fa-solid fa-globe"></i></span> Mars</h2>
     <p>The Red Planet; thin atmosphere, ancient riverbeds, and polar ice.</p>
     <ul>
-      <li>Two moons: Phobos and Deimos</li>
-      <li>Target for robotic and future human exploration</li>
+      <li><i class="fa-solid fa-satellite"></i> Two moons: Phobos and Deimos</li>
+      <li><i class="fa-solid fa-rocket"></i> Target for robotic and future human exploration</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="5">
-    <h2>Jupiter</h2>
+    <span class="slide-number">5</span>
+    <h2><span class="icon"><i class="fa-solid fa-circle"></i></span> Jupiter</h2>
     <p>Largest planet; gas giant with a famous Great Red Spot.</p>
     <ul>
-      <li>Dozens of moons, including Europa and Ganymede</li>
-      <li>Mostly hydrogen and helium</li>
+      <li><i class="fa-solid fa-moon"></i> Dozens of moons, including Europa and Ganymede</li>
+      <li><i class="fa-solid fa-atom"></i> Mostly hydrogen and helium</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="6">
-    <h2>Saturn</h2>
+    <span class="slide-number">6</span>
+    <h2><span class="icon"><i class="fa-solid fa-planet-ringed"></i></span> Saturn</h2>
     <p>Gas giant with spectacular rings made of ice and rock.</p>
     <ul>
-      <li>Many moons; Titan has a thick atmosphere</li>
-      <li>Less dense than water</li>
+      <li><i class="fa-solid fa-moon"></i> Many moons; Titan has a thick atmosphere</li>
+      <li><i class="fa-solid fa-droplet"></i> Less dense than water</li>
     </ul>
   </section>
+
   <section class="slide" data-slide="7">
-    <h2>Uranus & Neptune</h2>
+    <span class="slide-number">7</span>
+    <h2><span class="icon"><i class="fa-solid fa-snowflake"></i></span> Uranus & Neptune</h2>
     <p>Ice giants: cold, blue, and rich in ices (water, ammonia, methane).</p>
     <ul>
-      <li>Uranus: tilted on its side</li>
-      <li>Neptune: strong winds and dark storms</li>
+      <li><i class="fa-solid fa-arrows-up-down"></i> Uranus: tilted on its side</li>
+      <li><i class="fa-solid fa-bolt"></i> Neptune: strong winds and dark storms</li>
     </ul>
   </section>
-  <section class="slide" data-slide="8">
+
+  <section class="slide closing" data-slide="8">
     <h1>Thanks</h1>
-    <p>Use ← → or Space to navigate. <a href="../" style="color: #b8d4ff;">Back to presentations</a></p>
+    <p class="subtitle">← → or Space to navigate</p>
+    <p><a href="../">Back to presentations</a></p>
   </section>
+
+  <div class="slide-bullets" id="slide-bullets" aria-hidden="true"></div>
   <div class="nav">
     <button type="button" id="prev">Previous</button>
     <button type="button" id="next">Next</button>
   </div>
+
   <script>
     (function () {
-      var slides = document.querySelectorAll('.slide');
-      var prev = document.getElementById('prev');
-      var next = document.getElementById('next');
-      var current = 0;
-      function show(i) {
-        if (i < 0) i = 0;
-        if (i >= slides.length) i = slides.length - 1;
-        current = i;
-        slides.forEach(function (s, j) { s.classList.toggle('active', j === current); });
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      let current = 0;
+      let isAnimating = false;
+
+      const bulletsEl = document.getElementById('slide-bullets');
+      slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.setAttribute('data-index', i);
+        dot.addEventListener('click', () => goTo(i, i > current ? 'next' : 'prev'));
+        bulletsEl.appendChild(dot);
+      });
+
+      function updateBullets() {
+        bulletsEl.querySelectorAll('span').forEach((dot, i) => {
+          dot.classList.toggle('active', i === current);
+        });
       }
-      prev.addEventListener('click', function () { show(current - 1); });
-      next.addEventListener('click', function () { show(current + 1); });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+      updateBullets();
+
+      function goTo(index, direction) {
+        if (isAnimating || index < 0 || index >= slides.length) return;
+        isAnimating = true;
+
+        const prev = slides[current];
+        const next = slides[index];
+
+        document.body.setAttribute('data-dir', direction);
+        prev.classList.remove('active');
+        prev.classList.add('leaving');
+        next.classList.add('active');
+
+        prev.addEventListener('animationend', () => {
+          prev.classList.remove('leaving');
+          isAnimating = false;
+        }, { once: true });
+
+        current = index;
+        updateBullets();
+      }
+
+      document.getElementById('next').addEventListener('click', () => goTo(current + 1, 'next'));
+      document.getElementById('prev').addEventListener('click', () => goTo(current - 1, 'prev'));
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault();
+          goTo(current + 1, 'next');
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          goTo(current - 1, 'prev');
+        }
       });
     })();
   </script>

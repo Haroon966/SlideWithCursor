@@ -1,0 +1,559 @@
+---
+name: make-presentations
+description: Creates or edits visually stunning, animated HTML/CSS/JS slide decks as single-file presentations. Use when the user asks to make a presentation, create a slide deck, add slides, build a pitch deck, or design a slideshow. Produces extraordinary, memorable designs with rich animations, transitions, and polished UI — far beyond generic templates.
+---
+
+# Make Stunning HTML Presentations
+
+You are creating a **single-file HTML presentation** that is visually extraordinary. The goal is not "functional slides" — it is to make something that feels like it was designed by a world-class creative studio. Every presentation should have a **distinct visual identity**, **purposeful motion**, and **unforgettable aesthetic**.
+
+---
+
+## Pre-Code Design Thinking
+
+Before writing a single line of code, commit to a **bold aesthetic direction**. Ask:
+
+- **Topic & Tone**: What is the presentation about? Corporate/serious? Creative/playful? Technical/precise? Visionary/inspirational?
+- **Visual Identity**: Pick an extreme and own it. Examples:
+  - Dark, cinematic with glowing neon accents (tech/AI topics)
+  - Editorial magazine-style, high contrast black & white with one bold color (design/culture)
+  - Warm organic gradients, soft shadows, refined serif typography (creative/brand)
+  - Brutalist raw grid, bold slab type, stark color blocks (bold/provocative)
+  - Soft glassmorphism, pastel mesh gradients, light and airy (modern SaaS/product)
+  - Retro-futuristic, CRT scanlines, phosphor green on dark (nostalgia/tech)
+- **Typography**: Choose fonts that match the aesthetic. Load from Google Fonts. NEVER use Arial, Roboto, or Inter. Use pairings like:
+  - `Playfair Display` + `Lato` (editorial, elegant)
+  - `Space Mono` + `DM Sans` (technical, modern)
+  - `Fraunces` + `Source Sans 3` (warm, editorial)
+  - `Bebas Neue` + `Barlow` (bold, punchy)
+  - `Cormorant Garamond` + `Raleway` (luxury, refined)
+- **Color Palette**: Use CSS variables. Pick 3–5 colors max. Use dominant + sharp accent. Avoid purple-on-white.
+- **Memorable Hook**: What is the ONE visual detail people will remember? (A particle background, a morphing gradient, a typewriter hero, a kinetic number counter, a bold split-screen layout?)
+
+---
+
+## File Structure
+
+Every presentation is a **single self-contained HTML file**:
+
+```
+my-topic/
+└── index.html   ← everything: HTML + CSS + JS inline
+```
+
+If working in a multi-deck repo, also update the root `index.html`:
+```html
+<li><a href="my-topic/">My Topic Title</a></li>
+```
+
+---
+
+## HTML Slide Markup
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presentation Title</title>
+  <!-- Google Fonts (choose appropriate to aesthetic) -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <!-- Icon library: pick ONE -->
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <!-- OR Tabler Icons -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css" /> -->
+  <!-- OR Lucide (requires lucide.createIcons() call in script) -->
+  <!-- <script src="https://unpkg.com/lucide@latest"></script> -->
+  <style>/* All styles here */</style>
+</head>
+<body>
+  <a class="back" href="../">← Back</a>
+
+  <section class="slide active" data-slide="0"><!-- Slide 0 --></section>
+  <section class="slide" data-slide="1"><!-- Slide 1 --></section>
+  <!-- ... more slides ... -->
+
+  <div class="nav">
+    <button type="button" id="prev">Previous</button>
+    <button type="button" id="next">Next</button>
+  </div>
+
+  <script>/* Navigation + animation triggers */</script>
+</body>
+</html>
+```
+
+**Slide rules:**
+- First slide: `class="slide active" data-slide="0"`
+- All others: `class="slide" data-slide="N"`
+- Always end with a closing/thank-you slide
+
+---
+
+## Required Navigation Script
+
+```js
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let current = 0;
+  let isAnimating = false;
+
+  function goTo(index, direction) {
+    if (isAnimating || index < 0 || index >= slides.length) return;
+    isAnimating = true;
+
+    const prev = slides[current];
+    const next = slides[index];
+
+    document.body.setAttribute('data-dir', direction); // 'next' or 'prev'
+    prev.classList.remove('active');
+    prev.classList.add('leaving');
+    next.classList.add('active');
+
+    prev.addEventListener('animationend', () => {
+      prev.classList.remove('leaving');
+      isAnimating = false;
+    }, { once: true });
+
+    current = index;
+  }
+
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1, 'next'));
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1, 'prev'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1, 'next');
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1, 'prev');
+  });
+
+  // If using Lucide icons:
+  // if (window.lucide) lucide.createIcons();
+})();
+```
+
+---
+
+## CSS Architecture
+
+### Core Layout
+
+```css
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Define your palette as variables */
+  --bg: #0d0d0d;
+  --surface: #1a1a1a;
+  --accent: #e8ff47;
+  --text: #f0f0f0;
+  --muted: #888;
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Lato', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+/* ─── Slide base ─── */
+.slide {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  opacity: 0;
+  pointer-events: none;
+  /* Default: invisible, off-screen right */
+  transform: translateX(60px);
+  transition: none; /* driven by animations */
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+  animation: slideEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.slide.leaving {
+  animation: slideLeave 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+/* Direction-aware: reverse when going backwards */
+[data-dir="prev"] .slide.active {
+  animation: slideEnterReverse 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+[data-dir="prev"] .slide.leaving {
+  animation: slideLeaveReverse 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+```
+
+### Slide Transition Keyframes
+
+Choose **one transition style** to match the aesthetic. Pick the most fitting:
+
+**Option A — Horizontal Slide (clean, modern)**
+```css
+@keyframes slideEnter        { from { opacity: 0; transform: translateX(80px);  } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideLeave        { from { opacity: 1; transform: translateX(0);     } to { opacity: 0; transform: translateX(-80px); } }
+@keyframes slideEnterReverse { from { opacity: 0; transform: translateX(-80px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideLeaveReverse { from { opacity: 1; transform: translateX(0);     } to { opacity: 0; transform: translateX(80px); } }
+```
+
+**Option B — Scale + Fade (dramatic, cinematic)**
+```css
+@keyframes slideEnter        { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes slideLeave        { from { opacity: 1; transform: scale(1);    } to { opacity: 0; transform: scale(1.05) translateY(-20px); } }
+@keyframes slideEnterReverse { from { opacity: 0; transform: scale(1.05) translateY(-20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes slideLeaveReverse { from { opacity: 1; transform: scale(1);    } to { opacity: 0; transform: scale(0.92) translateY(20px); } }
+```
+
+**Option C — Vertical Scroll (editorial)**
+```css
+@keyframes slideEnter        { from { opacity: 0; transform: translateY(60px);  } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideLeave        { from { opacity: 1; transform: translateY(0);     } to { opacity: 0; transform: translateY(-60px); } }
+@keyframes slideEnterReverse { from { opacity: 0; transform: translateY(-60px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideLeaveReverse { from { opacity: 1; transform: translateY(0);     } to { opacity: 0; transform: translateY(60px); } }
+```
+
+### In-Slide Content Animations
+
+Animate slide content on entry using `animation-delay` so elements reveal in sequence:
+
+```css
+/* Stagger children on active slide */
+.slide.active h1 { animation: contentIn 0.6s 0.15s cubic-bezier(0.22,1,0.36,1) both; }
+.slide.active h2 { animation: contentIn 0.6s 0.25s cubic-bezier(0.22,1,0.36,1) both; }
+.slide.active p  { animation: contentIn 0.6s 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.slide.active ul { animation: contentIn 0.6s 0.4s  cubic-bezier(0.22,1,0.36,1) both; }
+
+/* Stagger individual list items */
+.slide.active li:nth-child(1) { animation: contentIn 0.5s 0.45s both; }
+.slide.active li:nth-child(2) { animation: contentIn 0.5s 0.55s both; }
+.slide.active li:nth-child(3) { animation: contentIn 0.5s 0.65s both; }
+.slide.active li:nth-child(4) { animation: contentIn 0.5s 0.75s both; }
+
+@keyframes contentIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+```
+
+### Navigation & Back Link
+
+```css
+.back {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 100;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.back:hover { color: var(--accent); }
+
+.nav {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.nav button {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.nav button:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+```
+
+---
+
+## Visual Techniques & Effects Catalog
+
+Use these to make slides extraordinary. Mix and match based on the aesthetic:
+
+### Backgrounds
+
+```css
+/* Gradient mesh (soft, modern) */
+background: radial-gradient(ellipse at 20% 50%, #1a0533 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 20%, #0d2b45 0%, transparent 60%),
+            #080810;
+
+/* Noise texture overlay (add depth) */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Animated gradient (breathing, alive) */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+.slide {
+  background: linear-gradient(135deg, #0d0221, #1a0a2e, #0d1b2a);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* Geometric grid lines */
+.slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+```
+
+### Typography Effects
+
+```css
+/* Huge display number / label */
+.slide-number {
+  font-size: clamp(6rem, 20vw, 16rem);
+  font-weight: 900;
+  line-height: 0.85;
+  opacity: 0.06;
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  user-select: none;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Outline/stroke text */
+.outline-text {
+  -webkit-text-stroke: 2px var(--accent);
+  color: transparent;
+}
+
+/* Kinetic typewriter (JS required) */
+/* See typewriter pattern below */
+```
+
+### Card & Content Layouts
+
+```css
+/* Glass card */
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Accent rule */
+.slide h2::before {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 3px;
+  background: var(--accent);
+  margin-bottom: 1rem;
+  border-radius: 2px;
+}
+
+/* Highlight pill */
+.pill {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.25em 0.9em;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85em;
+  letter-spacing: 0.05em;
+}
+
+/* Split layout */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+}
+```
+
+### Particle / Decorative JS Effects (optional, for hero slides)
+
+```js
+// Simple floating orbs (add to script block)
+function createOrbs(slideEl, count = 6) {
+  for (let i = 0; i < count; i++) {
+    const orb = document.createElement('div');
+    orb.className = 'orb';
+    Object.assign(orb.style, {
+      width: `${80 + Math.random() * 200}px`,
+      height: orb.style.width,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDuration: `${6 + Math.random() * 10}s`,
+      animationDelay: `${Math.random() * -8}s`,
+    });
+    slideEl.appendChild(orb);
+  }
+}
+```
+```css
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.07;
+  filter: blur(40px);
+  animation: orbFloat linear infinite;
+  pointer-events: none;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-30px, 40px) scale(1.1); }
+  66%       { transform: translate(20px, -20px) scale(0.9); }
+}
+```
+
+---
+
+## Slide Content Patterns
+
+### Hero / Title Slide
+- Giant display heading, 1–2 words max per line
+- Subtitle in a lighter weight or muted color
+- Optional: animated accent line, pill label, or background particle effect
+- Use `clamp()` for responsive font sizes: `font-size: clamp(3rem, 8vw, 8rem)`
+
+### Section Intro Slide
+- Large section number (low-opacity background element)
+- Short bold heading
+- 1-sentence description
+
+### Content / List Slide
+- Heading at top
+- 3–5 bullet points with icons (from icon library)
+- Stagger animations on list items
+- Keep text sparse — slides are not documents
+
+### Quote Slide
+- Huge opening quote mark (decorative, low-opacity)
+- Large quote text in a display font
+- Attribution in small caps / muted color
+
+### Two-Column Slide
+- `.split` grid for visual vs. text, or comparison
+- Decorative vertical divider (1px accent line)
+
+### Data / Stat Slide
+- 1–3 giant numbers with labels
+- Animate numbers counting up on slide entry (JS)
+- Keep surrounding text minimal
+
+### Closing / Thank-You Slide
+- Bold, simple, energetic
+- Optionally loop the background animation faster
+- Contact info or CTA in a pill or card
+
+---
+
+## Icons — Always Use a Library
+
+Pick **one** and stick to it throughout the deck. Do not use emoji or raw SVGs.
+
+| Library | CDN | Usage |
+|---|---|---|
+| **Font Awesome** | `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css` | `<i class="fa-solid fa-rocket"></i>` |
+| **Tabler Icons** | `https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css` | `<i class="ti ti-rocket"></i>` |
+| **Lucide** | `https://unpkg.com/lucide@latest` (JS) | `<i data-lucide="rocket"></i>` + `lucide.createIcons()` |
+
+Use icons on list items, stat callouts, section labels, and nav hints.
+
+---
+
+## Quality Checklist
+
+Before finishing, verify:
+
+- [ ] **Distinct identity**: Does this look like it was designed specifically for this topic, not a generic template?
+- [ ] **Typography**: Custom Google Fonts loaded, NOT Arial/Roboto/Inter
+- [ ] **Color palette**: CSS variables defined, 3–5 colors, bold accent
+- [ ] **Slide transitions**: Direction-aware enter/leave animations implemented
+- [ ] **Content animations**: Staggered reveals on headings, paragraphs, list items
+- [ ] **Icons**: At least one icon library included and used meaningfully
+- [ ] **Nav**: Keyboard (Arrow keys, Space) + button navigation works
+- [ ] **Back link**: Present, top-left, styled subtly
+- [ ] **Closing slide**: Final thank-you or CTA slide included
+- [ ] **Self-contained**: No external dependencies other than CDN links; single HTML file
+- [ ] **Memorable detail**: One signature effect that makes this presentation unforgettable
+- [ ] **Root index.html updated** (if in a multi-deck repo)
+
+---
+
+## Anti-Patterns — Never Do These
+
+- ❌ Use Arial, Roboto, Inter, or system-ui as the main font
+- ❌ Purple gradient on white background (default AI aesthetic)
+- ❌ Flat, static slides with no animation or motion
+- ❌ More than ~6 bullet points on a single slide
+- ❌ Emoji as icons (use a proper icon library)
+- ❌ Hardcoded colors scattered throughout CSS (use CSS variables)
+- ❌ Slides that look like Word documents
+- ❌ Generic "Thank You" on a plain white background for the last slide
+- ❌ Identical slide layouts repeated throughout the deck with no visual variation
+
+---
+
+## Reference Aesthetic Directions by Topic
+
+| Topic | Suggested Direction |
+|---|---|
+| Tech / AI / Software | Dark cinematic, neon accent, monospace font hints, grid overlay |
+| Business / Finance | Refined dark navy, gold accent, sharp serif, clean data |
+| Design / Creative | High-contrast editorial, bold slab type, single color pop |
+| Health / Wellness | Soft organic gradients, warm tones, rounded serif |
+| Education / Research | Academic editorial, structured grid, confident typography |
+| Startup / Pitch | Modern glassmorphism, energetic accent, bold stats |
+| Culture / Art | Maximalist, layered, expressive typography, unexpected layout |
