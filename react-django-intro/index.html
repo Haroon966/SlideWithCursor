@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React & Django intro</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: #0d1117;
+      color: #e8e8e8;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #fff; }
+    .slide h2 { font-size: 1.5rem; margin-bottom: 0.75rem; color: #79c0ff; }
+    .slide p { max-width: 42rem; text-align: center; line-height: 1.6; }
+    .slide ul { text-align: left; max-width: 36rem; margin-top: 0.5rem; }
+    .slide li { margin: 0.35rem 0; }
+    .slide code { background: #21262d; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.9em; }
+    .nav {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+    }
+    .nav button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #21262d;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+    }
+    .nav button:hover { background: #30363d; }
+    .back { position: fixed; top: 1rem; left: 1rem; z-index: 10; }
+    .back a { color: #888; text-decoration: none; font-size: 0.9rem; }
+    .back a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../">← Back to presentations</a>
+  <section class="slide active" data-slide="0">
+    <h1>React & Django intro</h1>
+    <p>Front-end and back-end foundations for modern web apps</p>
+  </section>
+  <section class="slide" data-slide="1">
+    <h2>What is React?</h2>
+    <p>A JavaScript library for building user interfaces, maintained by Meta (Facebook).</p>
+    <ul>
+      <li>Component-based: build UIs from reusable pieces</li>
+      <li>Declarative: describe what the UI should look like; React updates the DOM</li>
+      <li>Works with a single HTML root and a bundler (e.g. Vite, Create React App)</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="2">
+    <h2>React in one slide</h2>
+    <p>You write components that return JSX. State drives re-renders.</p>
+    <pre style="text-align: left; background: #21262d; padding: 1rem; border-radius: 6px; overflow: auto; max-width: 32rem;"><code>function Hello({ name }) {
+  return &lt;h1&gt;Hello, {name}!&lt;/h1&gt;;
+}</code></pre>
+    <p style="margin-top: 0.75rem;">Use <code>useState</code>, <code>useEffect</code>, and hooks for interactivity.</p>
+  </section>
+  <section class="slide" data-slide="3">
+    <h2>What is Django?</h2>
+    <p>A high-level Python web framework for building secure, scalable back-ends quickly.</p>
+    <ul>
+      <li>MVC-style: models, views, templates (plus URL routing)</li>
+      <li>ORM, admin, auth, and batteries included</li>
+      <li>REST APIs via Django REST framework</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="4">
+    <h2>Django in one slide</h2>
+    <p>Define models, views, and URLs. Templates or JSON for responses.</p>
+    <pre style="text-align: left; background: #21262d; padding: 1rem; border-radius: 6px; overflow: auto; max-width: 32rem;"><code># views.py
+def hello(request):
+    return JsonResponse({"message": "Hello"})</code></pre>
+    <p style="margin-top: 0.75rem;">Run with <code>python manage.py runserver</code>.</p>
+  </section>
+  <section class="slide" data-slide="5">
+    <h2>When to use which?</h2>
+    <ul>
+      <li><strong>React</strong>: rich, dynamic UIs; SPAs; mobile (React Native).</li>
+      <li><strong>Django</strong>: server-rendered pages, APIs, admin, content sites, auth and data layer.</li>
+      <li>Together: Django serves API + static build; React consumes API and handles the UI.</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="6">
+    <h1>Thanks</h1>
+    <p>Use ← → or Space to navigate. <a href="../" style="color: #79c0ff;">Back to presentations</a></p>
+  </section>
+  <div class="nav">
+    <button type="button" id="prev">Previous</button>
+    <button type="button" id="next">Next</button>
+  </div>
+  <script>
+    (function () {
+      var slides = document.querySelectorAll('.slide');
+      var prev = document.getElementById('prev');
+      var next = document.getElementById('next');
+      var current = 0;
+      function show(i) {
+        if (i < 0) i = 0;
+        if (i >= slides.length) i = slides.length - 1;
+        current = i;
+        slides.forEach(function (s, j) { s.classList.toggle('active', j === current); });
+      }
+      prev.addEventListener('click', function () { show(current - 1); });
+      next.addEventListener('click', function () { show(current + 1); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planets</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: #0a0a12;
+      color: #e8e8e8;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #fff; }
+    .slide h2 { font-size: 1.5rem; margin-bottom: 0.75rem; color: #b8d4ff; }
+    .slide p { max-width: 42rem; text-align: center; line-height: 1.6; }
+    .slide ul { text-align: left; max-width: 32rem; margin-top: 0.5rem; }
+    .slide li { margin: 0.25rem 0; }
+    .nav {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+    }
+    .nav button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #2a2a3a;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+    }
+    .nav button:hover { background: #3a3a4a; }
+    .back { position: fixed; top: 1rem; left: 1rem; z-index: 10; }
+    .back a { color: #888; text-decoration: none; font-size: 0.9rem; }
+    .back a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../">← Back to presentations</a>
+  <section class="slide active" data-slide="0">
+    <h1>Planets</h1>
+    <p>A quick tour of our solar system</p>
+  </section>
+  <section class="slide" data-slide="1">
+    <h2>Mercury</h2>
+    <p>Closest to the Sun; small, rocky, and heavily cratered.</p>
+    <ul>
+      <li>Orbital period: ~88 Earth days</li>
+      <li>No atmosphere to speak of</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="2">
+    <h2>Venus</h2>
+    <p>Similar in size to Earth; thick CO₂ atmosphere, runaway greenhouse.</p>
+    <ul>
+      <li>Extremely hot surface</li>
+      <li>Rotates slowly in the opposite direction</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="3">
+    <h2>Earth</h2>
+    <p>Our home: liquid water, life, and a protective atmosphere.</p>
+    <ul>
+      <li>One natural satellite: the Moon</li>
+      <li>Orbital period: ~365 days</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="4">
+    <h2>Mars</h2>
+    <p>The Red Planet; thin atmosphere, ancient riverbeds, and polar ice.</p>
+    <ul>
+      <li>Two moons: Phobos and Deimos</li>
+      <li>Target for robotic and future human exploration</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="5">
+    <h2>Jupiter</h2>
+    <p>Largest planet; gas giant with a famous Great Red Spot.</p>
+    <ul>
+      <li>Dozens of moons, including Europa and Ganymede</li>
+      <li>Mostly hydrogen and helium</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="6">
+    <h2>Saturn</h2>
+    <p>Gas giant with spectacular rings made of ice and rock.</p>
+    <ul>
+      <li>Many moons; Titan has a thick atmosphere</li>
+      <li>Less dense than water</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="7">
+    <h2>Uranus & Neptune</h2>
+    <p>Ice giants: cold, blue, and rich in ices (water, ammonia, methane).</p>
+    <ul>
+      <li>Uranus: tilted on its side</li>
+      <li>Neptune: strong winds and dark storms</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="8">
+    <h1>Thanks</h1>
+    <p>Use ← → or Space to navigate. <a href="../" style="color: #b8d4ff;">Back to presentations</a></p>
+  </section>
+  <div class="nav">
+    <button type="button" id="prev">Previous</button>
+    <button type="button" id="next">Next</button>
+  </div>
+  <script>
+    (function () {
+      var slides = document.querySelectorAll('.slide');
+      var prev = document.getElementById('prev');
+      var next = document.getElementById('next');
+      var current = 0;
+      function show(i) {
+        if (i < 0) i = 0;
+        if (i >= slides.length) i = slides.length - 1;
+        current = i;
+        slides.forEach(function (s, j) { s.classList.toggle('active', j === current); });
+      }
+      prev.addEventListener('click', function () { show(current - 1); });
+      next.addEventListener('click', function () { show(current + 1); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+      });
+    })();
+  </script>
+</body>
+</html>

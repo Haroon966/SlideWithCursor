@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI & UX design</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      background: #1a1a2e;
+      color: #e8e8e8;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #fff; }
+    .slide h2 { font-size: 1.5rem; margin-bottom: 0.75rem; color: #c9b8ff; }
+    .slide p { max-width: 42rem; text-align: center; line-height: 1.6; }
+    .slide ul { text-align: left; max-width: 36rem; margin-top: 0.5rem; }
+    .slide li { margin: 0.35rem 0; }
+    .nav {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 10;
+    }
+    .nav button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #2a2a4e;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 6px;
+    }
+    .nav button:hover { background: #3a3a5e; }
+    .back { position: fixed; top: 1rem; left: 1rem; z-index: 10; }
+    .back a { color: #888; text-decoration: none; font-size: 0.9rem; }
+    .back a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../">← Back to presentations</a>
+  <section class="slide active" data-slide="0">
+    <h1>UI & UX design</h1>
+    <p>Principles and practices for building better products</p>
+  </section>
+  <section class="slide" data-slide="1">
+    <h2>What is UI?</h2>
+    <p>User Interface: the visual and interactive layer users see and touch.</p>
+    <ul>
+      <li>Layout, typography, colors, buttons, forms</li>
+      <li>Consistency and clarity matter</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="2">
+    <h2>What is UX?</h2>
+    <p>User Experience: the overall feel and ease of achieving goals.</p>
+    <ul>
+      <li>Usability, accessibility, flow, and emotion</li>
+      <li>Research and iteration are central</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="3">
+    <h2>Key principles</h2>
+    <ul>
+      <li>Know your users and their goals</li>
+      <li>Keep things simple and predictable</li>
+      <li>Give clear feedback for every action</li>
+      <li>Design for accessibility from the start</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="4">
+    <h2>Examples</h2>
+    <p>Good UI/UX: clear labels, sensible defaults, helpful error messages, and a logical path to completion.</p>
+    <p style="margin-top: 1rem;">Avoid: clutter, hidden actions, jargon, and dead ends.</p>
+  </section>
+  <section class="slide" data-slide="5">
+    <h2>Best practices</h2>
+    <ul>
+      <li>Wireframe and prototype before coding</li>
+      <li>Test with real users early and often</li>
+      <li>Use patterns users already know</li>
+      <li>Measure success with clear metrics</li>
+    </ul>
+  </section>
+  <section class="slide" data-slide="6">
+    <h1>Thanks</h1>
+    <p>Use ← → or Space to navigate. <a href="../" style="color: #c9b8ff;">Back to presentations</a></p>
+  </section>
+  <div class="nav">
+    <button type="button" id="prev">Previous</button>
+    <button type="button" id="next">Next</button>
+  </div>
+  <script>
+    (function () {
+      var slides = document.querySelectorAll('.slide');
+      var prev = document.getElementById('prev');
+      var next = document.getElementById('next');
+      var current = 0;
+      function show(i) {
+        if (i < 0) i = 0;
+        if (i >= slides.length) i = slides.length - 1;
+        current = i;
+        slides.forEach(function (s, j) { s.classList.toggle('active', j === current); });
+      }
+      prev.addEventListener('click', function () { show(current - 1); });
+      next.addEventListener('click', function () { show(current + 1); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); show(current - 1); }
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); show(current + 1); }
+      });
+    })();
+  </script>
+</body>
+</html>
