@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Make Slides with Cursor — Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-deep: #0b0b0f;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f0f0f5;
+      --text-muted: #8888a0;
+      --accent: #7c5cff;
+      --accent-glow: rgba(124, 92, 255, 0.35);
+      --card-hover: rgba(255, 255, 255, 0.07);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      min-height: 100vh;
+      background: var(--bg-deep);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-glow), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(92, 124, 255, 0.15), transparent 45%),
+        var(--bg-deep);
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover { color: var(--accent); }
+    header {
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, #b8b8d0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+    .guide-section {
+      margin-bottom: 2.5rem;
+    }
+    .guide-section h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-section h3 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin: 1.25rem 0 0.5rem;
+    }
+    .guide-section p, .guide-section li {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .guide-section ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .guide-section ul li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .guide-section ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .cmd-block {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+    .cmd-block code {
+      color: #b8c5e0;
+    }
+    .cmd-block .comment {
+      color: var(--text-muted);
+    }
+    .live-link-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+    .live-link-box strong {
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .live-link-box a {
+      color: var(--accent);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .live-link-box a:hover { text-decoration: underline; }
+    .live-link-box p {
+      margin: 0.5rem 0 0;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .tip {
+      background: rgba(124, 92, 255, 0.08);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .wrap-footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .wrap-footer a {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .wrap-footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <a href="index.html" class="back-link">← Back to presentations</a>
+
+    <header>
+      <h1>How to Make Slides with Cursor</h1>
+      <p>Step-by-step guide: use the skill file to build your presentation, push to main, and get your live link.</p>
+    </header>
+
+    <section class="guide-section">
+      <h2>1. Use the presentation skill in Cursor</h2>
+      <p>This repo includes a <strong>skill file</strong> that teaches the AI how to create polished HTML slide decks. Use it so your presentation follows the same structure and looks great.</p>
+      <h3>Where is the skill?</h3>
+      <p>Path in the repo: <code>.cursor/skills/make-presentations/make-presentations.mdc</code></p>
+      <h3>How to use it</h3>
+      <ul>
+        <li>In Cursor, open the project (this repo).</li>
+        <li>When you want to create or edit a presentation, mention the skill or ask Cursor to “make a presentation” / “add a slide deck for [topic]”.</li>
+        <li>The AI will use the skill to generate a single-file HTML deck (e.g. <code>my-topic/index.html</code>) with slides, navigation, and styling.</li>
+      </ul>
+      <p class="tip"><strong>Tip:</strong> You can say things like: “Using the make-presentations skill, create a deck about [your topic]” or “Add a new presentation folder and index.html for my talk.”</p>
+    </section>
+
+    <section class="guide-section">
+      <h2>2. Push your changes to the main branch</h2>
+      <p>Before pushing, <strong>always pull first</strong> so you don’t overwrite others’ work and avoid merge conflicts.</p>
+      <h3>Step-by-step commands</h3>
+      <p><strong>Step 1 — Open the project folder in a terminal</strong></p>
+      <div class="cmd-block">
+        <code>cd /path/to/SlideWithCursor</code>
+        <span class="comment">  # Use your actual path, e.g. ~/SlideWithCursor</span>
+      </div>
+
+      <p><strong>Step 2 — Pull the latest changes from main</strong></p>
+      <div class="cmd-block">
+        <code>git pull origin main</code>
+      </div>
+      <p>If you see “Already up to date,” you’re good. If there are updates, they’ll be merged into your local copy.</p>
+
+      <p><strong>Step 3 — Stage your changes</strong></p>
+      <div class="cmd-block">
+        <code>git add .</code>
+        <span class="comment">  # Or add specific files: git add my-topic/ index.html</span>
+      </div>
+
+      <p><strong>Step 4 — Commit with a message</strong></p>
+      <div class="cmd-block">
+        <code>git commit -m "Add my presentation"</code>
+      </div>
+
+      <p><strong>Step 5 — Push to main</strong></p>
+      <div class="cmd-block">
+        <code>git push origin main</code>
+      </div>
+      <p>If you use a fork or your own repo, make sure <code>origin</code> points to your repo. You can set it with:</p>
+      <div class="cmd-block">
+        <code>git remote set-url origin https://github.com/YOUR_USERNAME/SlideWithCursor.git</code>
+      </div>
+    </section>
+
+    <section class="guide-section">
+      <h2>3. Access your live presentation</h2>
+      <p>When the site is hosted on <strong>GitHub Pages</strong>, every push to <code>main</code> updates the live site. Your presentation is available at a stable URL.</p>
+      <h3>Live link format</h3>
+      <div class="live-link-box">
+        <strong>Home page (all presentations)</strong><br>
+        <a href="https://haroon966.github.io/SlideWithCursor/">https://haroon966.github.io/SlideWithCursor/</a>
+        <p>Replace <code>haroon966</code> with your GitHub username if you use your own repo.</p>
+      </div>
+      <div class="live-link-box">
+        <strong>Direct link to a specific presentation</strong><br>
+        <a href="https://haroon966.github.io/SlideWithCursor/planets/">https://haroon966.github.io/SlideWithCursor/planets/</a>
+        <p>Use: <code>https://&lt;username&gt;.github.io/SlideWithCursor/&lt;folder-name&gt;/</code> — e.g. <code>my-topic/</code> for a deck in <code>my-topic/index.html</code>.</p>
+      </div>
+      <h3>How to get your link</h3>
+      <ul>
+        <li>Open the home page link above and click your presentation from the list, or</li>
+        <li>Use the direct link: <code>https://&lt;username&gt;.github.io/SlideWithCursor/&lt;your-folder&gt;/</code></li>
+      </ul>
+      <p class="tip"><strong>Note:</strong> GitHub Pages may take 1–2 minutes to update after a push. If you don’t see your changes, wait a bit and refresh.</p>
+    </section>
+
+    <section class="guide-section">
+      <h2>Quick recap</h2>
+      <ul>
+        <li>Use the <strong>make-presentations</strong> skill in Cursor to create or edit slide decks.</li>
+        <li>Before pushing: <strong>pull</strong> then <strong>push</strong> to <code>main</code>.</li>
+        <li>Commands: <code>git pull origin main</code> → <code>git add .</code> → <code>git commit -m "..."</code> → <code>git push origin main</code>.</li>
+        <li>Live link: <code>https://&lt;username&gt;.github.io/SlideWithCursor/</code> for the list, or add <code>&lt;folder-name&gt;/</code> for a specific presentation.</li>
+      </ul>
+    </section>
+
+    <footer class="wrap-footer">
+      <a href="index.html">← Back to presentations</a>
+      <span style="color: var(--text-muted); margin: 0 0.5rem;">·</span>
+      <a href="https://github.com/Haroon966/SlideWithCursor">View on GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
