@@ -194,13 +194,20 @@
       <p>This repo includes a <strong>skill file</strong> that teaches the AI how to create polished HTML slide decks. Use it so your presentation follows the same structure and looks great.</p>
       <h3>Where is the skill?</h3>
       <p>Path in the repo: <code>.cursor/skills/make-presentations/make-presentations.mdc</code></p>
-      <h3>How to use it</h3>
+      <h3>How to use the skill in Cursor</h3>
       <ul>
-        <li>In Cursor, open the project (this repo).</li>
-        <li>When you want to create or edit a presentation, mention the skill or ask Cursor to “make a presentation” / “add a slide deck for [topic]”.</li>
+        <li><strong>Open this project in Cursor</strong> (the SlideWithCursor repo).</li>
+        <li>In the Cursor chat, type <code>@</code> and choose <strong>make-presentations</strong> (or type <code>@make-presentations</code>) so the AI follows the skill.</li>
+        <li>Then ask in plain language, for example:
+          <ul>
+            <li>“Create a presentation about [your topic]”</li>
+            <li>“Make a slide deck for my talk on [topic]”</li>
+            <li>“Add a new presentation folder and index.html for [topic]”</li>
+          </ul>
+        </li>
         <li>The AI will use the skill to generate a single-file HTML deck (e.g. <code>my-topic/index.html</code>) with slides, navigation, and styling.</li>
       </ul>
-      <p class="tip"><strong>Tip:</strong> You can say things like: “Using the make-presentations skill, create a deck about [your topic]” or “Add a new presentation folder and index.html for my talk.”</p>
+      <p class="tip"><strong>Tip:</strong> You can also say: “Using the make-presentations skill, create a deck about [your topic]” or “Add a new presentation for my talk.” If the skill is referenced (e.g. with @), Cursor will apply its rules for layout, animations, and structure.</p>
     </section>
 
     <section class="guide-section">
@@ -265,7 +272,7 @@
     <section class="guide-section">
       <h2>Quick recap</h2>
       <ul>
-        <li>Use the <strong>make-presentations</strong> skill in Cursor to create or edit slide decks.</li>
+        <li>In Cursor chat, use <code>@make-presentations</code> and ask for a slide deck (e.g. “Create a presentation about [topic]”).</li>
         <li>Before pushing: <strong>pull</strong> then <strong>push</strong> to <code>main</code>.</li>
         <li>Commands: <code>git pull origin main</code> → <code>git add .</code> → <code>git commit -m "..."</code> → <code>git push origin main</code>.</li>
         <li>Live link: <code>https://&lt;username&gt;.github.io/SlideWithCursor/</code> for the list, or add <code>&lt;folder-name&gt;/</code> for a specific presentation.</li>
